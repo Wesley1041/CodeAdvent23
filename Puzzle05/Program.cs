@@ -2,6 +2,7 @@
 
 List<long> seeds = new List<long>();
 List<Mapper> mappers = new List<Mapper>();
+long? nearestLocation = null;
 
 void Arrange()
 {
@@ -60,26 +61,26 @@ void Execute2()
 {
     Console.WriteLine("Start processing seeds");
 
-    long? nearestLocation = null;
-
     for (var i = 0; i < seeds.Count; i += 2)
     {
         var rangeStart = seeds[i];
-        var rangeEnd = rangeStart + seeds[i + 1];
+        var rangeLength = (int)seeds[i + 1];
         
-        Console.WriteLine($"Process seed range {rangeStart}..{rangeEnd}");
+        Console.WriteLine($"Process seed range {rangeStart}..{rangeStart + rangeLength - 1}");
 
-        for (var seed = rangeStart; seed <= rangeEnd; seed++)
-        {
-            //Console.WriteLine($"Process seed {seed}");
-            var location = MapValue(seed);
-            if (nearestLocation == null || location < nearestLocation)
-            {
-                nearestLocation = location;
-            }
-        }
+        Parallel.For(0, rangeLength, 
+            (index) => CalculateSeed(rangeStart + index));
         
         Console.WriteLine($"Nearest location: {nearestLocation}");
+    }
+}
+
+void CalculateSeed(long seed)
+{
+    var location = MapValue(seed);
+    if (nearestLocation == null || location < nearestLocation)
+    {
+        nearestLocation = location;
     }
 }
 

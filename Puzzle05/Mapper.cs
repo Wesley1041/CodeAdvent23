@@ -15,6 +15,15 @@
 
         public void AddMap(Map map)
         {
+            for (var i = 0; i < _maps.Count; i++)
+            {
+                if (_maps[i].SourceStart > map.SourceStart) continue;
+                
+                _maps.Insert(i, map);
+                return;
+            }
+            
+            // Add map to the end of the list
             _maps.Add(map);
         }
 
@@ -23,7 +32,7 @@
             foreach (var map in _maps)
             {
                 if (!map.CheckInRange(value)) continue;
-                
+
                 return map.MapValue(value);
             }
 
