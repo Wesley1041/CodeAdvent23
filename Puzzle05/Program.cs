@@ -31,7 +31,7 @@ long MapValue(long value)
 {
     foreach (var mapper in mappers)
     {
-        value = mapper.MapValue(value);
+        value = mapper.MapValue(value); // should be O(1)
     }
 
     return value;
@@ -56,5 +56,32 @@ void Execute()
     Console.WriteLine($"Nearest location: {minValue}");
 }
 
+void Execute2()
+{
+    Console.WriteLine("Start processing seeds");
+
+    long? nearestLocation = null;
+
+    for (var i = 0; i < seeds.Count; i += 2)
+    {
+        var rangeStart = seeds[i];
+        var rangeEnd = rangeStart + seeds[i + 1];
+        
+        Console.WriteLine($"Process seed range {rangeStart}..{rangeEnd}");
+
+        for (var seed = rangeStart; seed <= rangeEnd; seed++)
+        {
+            //Console.WriteLine($"Process seed {seed}");
+            var location = MapValue(seed);
+            if (nearestLocation == null || location < nearestLocation)
+            {
+                nearestLocation = location;
+            }
+        }
+        
+        Console.WriteLine($"Nearest location: {nearestLocation}");
+    }
+}
+
 Arrange();
-Execute();
+Execute2();

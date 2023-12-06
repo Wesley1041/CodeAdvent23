@@ -4,7 +4,7 @@
     {
         public string Name { get; set; }
 
-        private List<Map> _maps;
+        private readonly List<Map> _maps;
 
         public Mapper(string name)
         {
@@ -20,18 +20,14 @@
 
         public long MapValue(long value)
         {
-            var map = _maps.Find(x => x.CheckInRange(value));
-
-            if (map == null)
+            foreach (var map in _maps)
             {
-                //Console.WriteLine($"Mapped {value} to itself with mapper \"{Name}\"");
-                return value;
+                if (!map.CheckInRange(value)) continue;
+                
+                return map.MapValue(value);
             }
 
-            var newValue = map.MapValue(value);
-            //Console.WriteLine($"Mapped {value} to {newValue} with mapper \"{Name}\"");
-
-            return newValue;
+            return value;
         }
     }
 }
