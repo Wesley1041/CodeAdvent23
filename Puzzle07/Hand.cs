@@ -25,7 +25,7 @@
                 {
                     frequencies[strength]++;
 
-                    if (frequencies[strength] > highest)
+                    if (frequencies[strength] > highest && card.Value != 'J')
                     {
                         highest = frequencies[strength];
                     }
@@ -54,10 +54,10 @@
             }
         }
 
-        public bool IsGreaterThan(Hand otherHand)
+        public bool IsGreaterThan(Hand otherHand, bool useJokers = false)
         {
-            var x = GetHandType();
-            var y = otherHand.GetHandType();
+            var x = useJokers ? GetHandTypeWithJokers() : GetHandType();
+            var y = useJokers ? otherHand.GetHandTypeWithJokers() : otherHand.GetHandType();
 
             if (x != y) return x > y;
 
@@ -83,6 +83,20 @@
 
             return output;
         }
+        
+        public int GetHandTypeWithJokers()
+        {
+            var type = GetHandType();
+
+            var jokers = Cards.Count(x => x.Value == 'J');
+
+            for (var i = 0; i < jokers; i++)
+            {
+                type = BuffType(type);
+            }
+
+            return type;
+        }
 
         private bool HasTwoPairs(Dictionary<int, int> frequencies)
         {
@@ -99,6 +113,26 @@
             }
 
             return false;
+        }
+
+        private int BuffType(int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return 1;
+                case 1:
+                    return 3;
+                case 2:
+                    return 4;
+                case 3:
+                    return 5;
+                case 4:
+                    return 5;
+                case 5:
+                default:
+                    return 6;
+            }
         }
     }
 }
