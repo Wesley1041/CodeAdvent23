@@ -17,62 +17,41 @@ void Arrange()
 
 void Execute()
 {
-    hands.Sort((x, y) => x.IsGreaterThan(y, true) ? 1 : -1);
+    // Sort
+    for (int i = 0; i < hands.Count; i++)
+    {
+        var hand = hands[i];
+        var j = i - 1;
+        while (j >= 0 && hands[j].IsGreaterThan(hand, true))
+        {
+            hands[j + 1] = hands[j];
+            j--;
+        }
+        hands[j + 1] = hand;
+    }
+    //hands.Sort((x, y) => x.IsGreaterThan(y, true) ? 1 : -1);
 
     var sum = 0;
 
     for (int i = 0; i < hands.Count; i++)
     {
-        Test(hands[i]);
+        Test(hands[i], i);
         sum += hands[i].Bid * (i + 1);
     }
 
     Console.WriteLine($"Winnings: {sum}");
 }
 
-void Test(Hand hand)
+void Test(Hand hand, int index)
 {
-    var highest = 0;
-    char? highestChar = null;
+    var cards = hand.GetCards();
+    Console.WriteLine($"{cards} - {hand.GetHandTypeWithJokers()}");
 
-    var dict = new Dictionary<char, int>();
-
-    foreach (var card in hand.Cards)
+    for (int i = 0; i < index; i++)
     {
-        var value = card.Value;
-        if (dict.ContainsKey(value)) dict[value]++;
-        else dict.Add(value, 1);
+        if (!hand.IsGreaterThan(hands[i], true))
+            throw new Exception($"Hand {cards} is actually smaller than {hands[i].GetCards()}");
     }
-
-    var jokers = 0;
-    if (dict.ContainsKey('J'))
-        jokers = dict['J'];
-
-    var handString = "";
-
-    foreach (var item in dict)
-    {
-        handString += item.Key;
-
-        if (item.Key == 'J') continue;
-
-        if (item.Value > highest)
-        {
-            highest = item.Value;
-            highestChar = item.Key;
-        }
-    }
-
-    var output = "";
-    if (jokers < 5)
-    {
-        foreach (var item in handString)
-        {
-            output += item == 'J' ? highestChar : item;
-        }
-    }
-
-    Console.WriteLine($"{output} - {hand.GetHandTypeWithJokers()}");
 }
 
 //Test();
