@@ -61,13 +61,13 @@
             }
         }
 
-        private LoopResult StepsUntilResult(Location startLocation)
+        public void StepsUntilResult(Location currentLocation)
         {
-            var firstNextLocation = DoStep(startLocation, Directions[0]);
-            var currentLocation = firstNextLocation;
             var finishSteps = new List<int>();
+            var lastHitAt = 0;
+            var reachedFinish = 0;
 
-            var steps = -1;
+            var steps = 0;
             while (true)
             {
                 foreach (var direction in Directions)
@@ -75,16 +75,24 @@
                     if (currentLocation == null) throw new Exception("Location is null");
 
                     currentLocation = DoStep(currentLocation, direction);
+                    steps++;
 
                     if (currentLocation.Name.EndsWith('Z'))
                     {
                         finishSteps.Add(steps);
+                        Console.WriteLine($"Found finish {currentLocation.Name} after {steps - lastHitAt} steps");
+                        lastHitAt = steps;
+                        reachedFinish++;
                     }
 
+                    if (reachedFinish > 2) return;
+
+                    /*
                     if (currentLocation == firstNextLocation && steps > 0)
                     {
                         return new LoopResult(steps, finishSteps);
                     }
+                    */
                 }
             }
         }

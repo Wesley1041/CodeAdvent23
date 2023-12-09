@@ -12,6 +12,21 @@ ParseResult Arrange()
     return new ParseResult(locations, directions);
 }
 
+long LCM(long[] numbers)
+{
+    return numbers.Aggregate(lcm);
+}
+
+long lcm(long a, long b)
+{
+    return Math.Abs(a * b) / GCD(a, b);
+}
+
+long GCD(long a, long b)
+{
+    return b == 0 ? a : GCD(b, a % b);
+}
+
 void Execute()
 {
     var input = Arrange();
@@ -24,12 +39,11 @@ void Execute()
         .Select(p => p.Value)
         .ToList();
 
-    var steps = startLocations.Select(l => executor.DoSteps(l)).ToList();
+    var steps = startLocations.Select(l => (long)executor.DoSteps(l)).ToArray();
 
-    long sum = 1;
-    foreach (var step in steps) sum *= step;
+    var sum = LCM(steps);
 
-    Console.WriteLine($"Steps: {sum}");
+    Console.WriteLine(sum);
 }
 
 Execute();
