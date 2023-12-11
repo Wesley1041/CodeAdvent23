@@ -10,5 +10,6 @@
         SouthWest = '7',
         Ground = '.',
         Start = 'S',
+        Border = '*',
     }
 }

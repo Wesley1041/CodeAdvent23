@@ -24,6 +24,29 @@
             return new ParseResult(grid, start);
         }
 
+        public static Tile[,] ParseGridWithBorders(Tile[,] firstGrid)
+        {
+            var width = firstGrid.GetLength(0) * 2 - 1;
+            var height = firstGrid.GetLength(1) * 2 - 1;
+
+            var grid = new Tile[width, height];
+
+            for (var y = 0; y < height; y++)
+                for (var x = 0; x < width; x++)
+                {
+                    if (x % 2 == 0 && y % 2 == 0)
+                    {
+                        grid[x, y] = firstGrid[x / 2, y / 2];
+                    }
+                    else
+                    {
+                        grid[x, y] = Tile.Border;
+                    }
+                }
+
+            return grid;
+        }
+
         private static List<string> ReadLines()
         {
             var lines = new List<string>();
