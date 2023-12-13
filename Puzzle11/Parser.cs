@@ -2,7 +2,7 @@ namespace Puzzle11;
 
 public static class Parser
 {
-    public static bool[,] ParseSpace()
+    public static ParseResult ParseSpace()
     {
         // Parse input
         var lines = ParseLines();
@@ -11,7 +11,6 @@ public static class Parser
         var grid = new bool[width, height];
         var emptyRows = new bool[height];
         var populatedColumns = new bool[width];
-        var populatedColumnsCount = 0;
 
         for (var y = 0; y < height; y++)
         {
@@ -21,32 +20,28 @@ public static class Parser
                 if (lines[y][x] == '#')
                 {
                     grid[x, y] = true;
-                    if (!populatedColumns[x]) populatedColumnsCount++;
                     populatedColumns[x] = true;
                 }
         }
 
-        // Enlarge empty rows/columns
-        var output = new List<string>();
+        // Find empty rows and columns
+        var emptyColumnsInt = new int[width];
+        var emptyColumnsCount = 0;
+        for (var x = 0; x < width; x++)
+        {
+            if (!populatedColumns[x]) emptyColumnsCount++;
+            emptyColumnsInt[x] = emptyColumnsCount;
+        }
         
+        var emptyRowsInt = new int[width];
+        var emptyRowsCount = 0;
         for (var y = 0; y < height; y++)
         {
-            if (emptyRows[y])
-                output.Add(new string('.', width * 2 - populatedColumnsCount));
-
-            var newLine = "";
-            for (var x = 0; x < width; x++)
-            {
-                if (!populatedColumns[x])
-                    newLine += '.';
-
-                newLine += grid[x, y] ? '#' : '.';
-            }
-            
-            output.Add(newLine);
+            if (emptyRows[y]) emptyRowsCount++;
+            emptyRowsInt[y] = emptyRowsCount;
         }
 
-        return ParseGrid(output);
+        return new ParseResult(emptyColumnsInt, emptyRowsInt, grid);
     }
 
     private static List<string> ParseLines()
